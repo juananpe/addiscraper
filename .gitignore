@@ -1,0 +1,5 @@
+addi/spiders/salida
+addi/spiders/memorias
+*.pyc
+.DS_Store
+
