@@ -40,6 +40,7 @@ class MongoDBPipeline(object):
     def print_dict(self, d):
         new = {}
         for k, v in d.items():
+            v = v.replace('"', '´').replace("'", '´')
             if k.startswith('dc'):
                 new[k.replace('.', '-')] = v
             else:
