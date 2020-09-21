@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'addi.spiders'
 #USER_AGENT = 'addi (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -56,6 +56,13 @@ ROBOTSTXT_OBEY = True
 #    'addi.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': None,
+    'scrapy_httpcache.downloadermiddlewares.httpcache.AsyncHttpCacheMiddleware': 900,
+}
+
+
+
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
@@ -67,6 +74,14 @@ ROBOTSTXT_OBEY = True
 #ITEM_PIPELINES = {
 #    'addi.pipelines.AddiPipeline': 300,
 #}
+
+ITEM_PIPELINES = {'addi.pipelines.MongoDBPipeline': 300, }
+
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "addi"
+MONGODB_COLLECTION = "tfgs"
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -88,3 +103,19 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# -----------------------------------------------------------------------------
+# SCRAPY HTTPCACHE SETTINGS
+# -----------------------------------------------------------------------------
+HTTPCACHE_ENABLED = True
+HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 500, 503]
+HTTPCACHE_STORAGE = 'scrapy_httpcache.extensions.httpcache_storage.MongoDBCacheStorage'
+HTTPCACHE_MONGODB_HOST = '127.0.0.1'
+HTTPCACHE_MONGODB_PORT = 27017
+HTTPCACHE_MONGODB_USERNAME = ''
+HTTPCACHE_MONGODB_PASSWORD = ''
+HTTPCACHE_MONGODB_CONNECTION_POOL_KWARGS = {}
+HTTPCACHE_MONGODB_AUTH_DB = 'admin'
+HTTPCACHE_MONGODB_DB = 'cache_storage'
+HTTPCACHE_MONGODB_COLL = 'cache'
+

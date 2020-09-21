@@ -19,7 +19,7 @@ class AddiehuSpider(scrapy.Spider):
         value = selector.extract_first()
         if not value:
             value = ""
-        return self.tabsnewlines.sub("", value.encode('utf-8'))
+        return self.tabsnewlines.sub("", value) #.encode('utf-8'))
 
     def parse(self, response):
         for project in response.css('div.col-sm-9.artifact-description'):
