@@ -75,13 +75,27 @@ DOWNLOADER_MIDDLEWARES = {
 #    'addi.pipelines.AddiPipeline': 300,
 #}
 
-ITEM_PIPELINES = {'addi.pipelines.MongoDBPipeline': 300, }
+# ITEM_PIPELINES = {'addi.pipelines.MongoDBPipeline': 300, }
 
-MONGODB_SERVER = "localhost"
-MONGODB_PORT = 27017
-MONGODB_DB = "addi"
-MONGODB_COLLECTION = "tfgs"
+ITEM_PIPELINES = {
+        'addi.pipelines.DuplicatesPipeline': 100, 
+        'addi.pipelines.AddiPipeline': 200, 
+        }
 
+# MONGODB_SERVER = "localhost"
+# MONGODB_PORT = 27017
+# MONGODB_DB = "addi"
+# MONGODB_COLLECTION = "tfgs"
+
+# MySQL
+CONNECTION_STRING = "{drivername}://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8".format(
+     drivername="mysql",
+     user="juanan",
+     passwd="",
+     host="localhost",
+     port="3306",
+     db_name="uam_projects",
+)
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

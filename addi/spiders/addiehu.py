@@ -3,12 +3,15 @@ import scrapy
 from scrapy.http.request import Request
 from scrapy.shell import inspect_response
 import re
+from addi.items import AddiItem
+from scrapy.loader import ItemLoader
 # import csv
 
 class AddiehuSpider(scrapy.Spider):
     name = 'addiehu'
     allowed_domains = ['addi.ehu.es']
-    start_urls = ['https://addi.ehu.es/handle/10810/2017/discover?query=%22Grado+en+Ingenier%C3%ADa+Inform%C3%A1tica%22&submit=&rpp=10&sort_by=dc.date.issued_dt&order=desc']
+    start_urls = ['https://addi.ehu.es/handle/10810/2017/discover?order=desc&rpp=10&sort_by=dc.date.issued_dt&page=1&query=%22Grado+en+Ingenier%C3%ADa+Inform%C3%A1tica%22&group_by=none&etal=0']
+    repo = 2 # addi.ehu.es 
 
     # outfile = open("output.csv", "w")
     # writer = csv.writer(outfile)
@@ -30,7 +33,7 @@ class AddiehuSpider(scrapy.Spider):
             detailspage = 'https://' + self.allowed_domains[0] + link + '?show=full'
             # print(detailspage)
             request = Request(detailspage, callback = self.visit_details)
-            request.meta['item'] = { 'link': link , 'title': title, 'author': author, 'date': date }
+            request.meta['item'] = { 'link': link , 'project': title, 'author': author, 'date': date }
             yield request
             for next_page in response.css('a.next-page-link'):
                 yield response.follow(next_page, self.parse)
@@ -38,17 +41,22 @@ class AddiehuSpider(scrapy.Spider):
     def visit_details(self, response):
         item = response.meta['item']
 
-        ind = 0
-        for enlace in response.css('div.file-link > a ::attr(href)').extract():
-            item['linkdetail' + str(ind)] = enlace
-            ind = ind + 1
-        # inspect_response(response, self)
-        for dc in response.css('tr.ds-table-row'):
-            clave = self.clean(dc.css('td.label-cell ::text'))
-            valor = self.clean(dc.css('td.word-break ::text'))
-            print(clave + ":" + valor)
-            item[clave] = valor
-        # self.writer.writerow( item.values() )        
+        links = []
+        #aspect_artifactbrowser_ItemViewer_div_item-view div > a
+        for enlace in response.css('#aspect_artifactbrowser_ItemViewer_div_item-view div > a ::attr(href)').extract():
+            links.append(enlace)
+        # FIXME: llega link pero no se usa... en links también está
+        loader = ItemLoader(item=AddiItem())
+        loader.add_value('author', item['author'])
+        loader.add_value('date', item['date'])
+        loader.add_value('project', item['project'])
+        loader.add_value('links', links)
+        loader.add_value('repo',self.repo)
+        # inspect_response(response, self)
+
+        yield loader.load_item()
+
+
         yield item
 
     def close(self):

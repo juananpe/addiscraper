@@ -5,10 +5,30 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+
+from scrapy.item import Item, Field 
+from scrapy.loader.processors import MapCompose, TakeFirst
+
+# import scrapy
 
 
-class AddiItem(scrapy.Item):
+class AddiItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    author = Field(
+        input_processor=MapCompose(str.strip),
+        output_processor=TakeFirst()
+    )
+    date = Field(
+            input_processor=MapCompose(str.strip),
+        output_processor=TakeFirst()
+    )
+    project = Field(
+        input_processor=MapCompose(str.strip),
+        output_processor=TakeFirst()
+    )
+    links = Field()
+    repo = Field(
+        # input_processor=MapCompose(str.strip),
+        output_processor=TakeFirst()
+    )
